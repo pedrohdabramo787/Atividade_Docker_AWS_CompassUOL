@@ -2,7 +2,7 @@
 Este repositório tem como objetivo documentar as etapas que realizei para a execução da atividade de AWS - Docker do Programa de Bolsas AWS e DevSecOps - Compass UOL.
 
 ### Requisitos da atividade:
-- Instalação e configuração do DOCKER ou CONTAINERD no host EC2.
+- Instalação e configuração do DOCKER ou CONTAINER no host EC2.
 - Ponto adicional para o trabalho: Utilizar a instalação via script de Start Instance (user_data.sh).
 - Efetuar deploy de uma aplicação WordPress com container de aplicação RDS database MySQL.
 - Configuração da utilização do serviço EFS AWS para estáticos do container de aplicação WordPress.
