@@ -1,52 +1,43 @@
 #!/bin/bash
-#Atualizar os pacotes do sistema
-sudo yum update -y
 
-#Instalar, iniciar e configurar a inicialização automática do docker
-sudo yum install docker -y 
+sudo yum update -y
+sudo yum install -y docker
 sudo systemctl start docker
 sudo systemctl enable docker
+sudo usermod -a -G docker ec2-user
 
-#Adicionar o usuário ec2-user ao grupo docker
-sudo usermod -aG docker ec2-user
-
-#Instalação do docker-compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-#Instalar, iniciar e configurar a inicialização automática do nfs-utils
-sudo yum install nfs-utils -y
-sudo systemctl start nfs-utils
-sudo systemctl enable nfs-utils
+sudo yum install -y amazon-efs-utils
+sudo systemctl start amazon-efs-utils
+sudo systemctl enable amazon-efs-utils
 
-#Criar a pasta onde o EFS vai ser montado
-sudo mkdir /efs
+sudo mkdir /mnt/efs
 
-#Montagem e configuração da montagem persistente do EFS
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ID-EFS:/ efs
-sudo echo "ID-EFS:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
+sudo echo "fs-05ef3dcc62f5c8a37.efs.us-east-1.amazonaws.com:/ /mnt/efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
+sudo mount -a
 
-# Criar uma pasta para os arquivos do WordPress
-sudo mkdir /efs/wordpress
+sudo mkdir /mnt/efs/wordpress
 
-# Criar um arquivo docker-compose.yaml para configurar o WordPress
-sudo cat <<EOL > /efs/docker-compose.yaml
+
+sudo cat <<EOF > /mnt/efs/docker-compose.yaml
 version: '3.8'
 services:
   wordpress:
     image: wordpress:latest
-    container_name: wordpress
+    restart: always
     ports:
-      - "80:80"
+      - 80:80
     environment:
-      WORDPRESS_DB_HOST: RDS-Endpoint
-      WORDPRESS_DB_USER: RDS-Master username
-      WORDPRESS_DB_PASSWORD: RDS-Master password
-      WORDPRESS_DB_NAME: RDS-Initial database name
-      WORDPRESS_TABLE_CONFIG: wp_
+      TZ: America/Sao_Paulo
+      WORDPRESS_DB_HOST: database-1.c9yo8sqomljl.us-east-1.rds.amazonaws.com
+      WORDPRESS_DB_NAME: dockerdb
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORD: admin123
     volumes:
-      - /efs/wordpress:/var/www/html
-EOL
+      - /mnt/efs/wordpress:/var/www/html
+EOF
 
-# Inicializar o WordPress com docker-compose
-docker-compose -f /efs/docker-compose.yaml up -d
+sudo yum install libxcrypt-compat -y
+docker-compose -f /mnt/efs/docker-compose.yaml up -d
