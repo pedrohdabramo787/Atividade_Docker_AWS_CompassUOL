@@ -1,5 +1,5 @@
-## Atividade AWS - Docker - DevSecOps Compass UOL
-Este repositório tem como objetivo documentar as etapas que realizei para a execução da atividade de AWS - Docker do Programa de Bolsas AWS e DevSecOps - Compass UOL.
+## DevOps Compass UOL - Atividade Docker + Wordpress
+Documentação das etapas que foram efetuadas para a execução da atividade de AWS/Docker/WP do Programa de Bolsas AWS e DevSecOps Compass UOL.
 
 ### Requisitos da atividade:
 - Instalação e configuração do DOCKER ou CONTAINER no host EC2.
@@ -18,9 +18,9 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
 - Utilizar repositório git para versionamento.
 - Criar documentação.
 
-## Etapas de execução
+## Execução prática
 
-### Configuração da Network:
+### Configuração Network:
 - Acessei o console AWS e entrei no serviço **VPC**.
 - No menu lateral esquerdo, na seção de **Virtual private cloud** selecionei **Your VPCs**.
 - Dentro de **Your VPCs** cliquei no botão **Create VPC**.
@@ -34,7 +34,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
 #### Preview
 <img src=mapa-vpc.PNG>
 
-### Configuração dos Security Groups:
+### Configuração de Security Groups:
 - Acessei o console AWS e entrei no serviço **EC2**.
 - No menu lateral esquerdo, na seção de **Network & Security**, selecionei **Security Groups**.
 - Dentro de **Security Groups**, cliquei no botão **Create security group**.
@@ -66,7 +66,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
         |:----:|:--------:|:----------:|:-------------------:|
         | NFS  | TCP      | 2049       |    EC2 Web Server   |
 
-### Criando o Elastic File System:
+### Criando Elastic File System:
 - Acessei o console AWS e entrei no serviço de **EFS**.
 - Na tela do **Elastic File System** cliquei no botão **Create file system**.
 - Depois cliquei no botão **Customize**.
@@ -88,7 +88,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
     - #### Step 4 - Review and create:
         - Revisei e cliquei em **Create** para finalizar.
 
-### Criando o Relational Database Service:
+### Criando Relational Database Service:
 - Acessei o console AWS e entrei no serviço de **RDS**.
 - Na tela **Dashboard** cliquei no botão **Create database**.
 - Executei a seguinte configuração:
@@ -100,7 +100,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
     - Na seção **Additional configuration**, no campo **Initial database name** coloquei o nome "dockerdb".
 - Revisei e cliquei em **Create database** para finalizar.
 
-### Criando o Classic Load Balancer:
+### Criando Load Balancer:
 - Acessei o console AWS e entrei no serviço **EC2**.
 - No menu lateral esquerdo, na seção de **Load Balancing** selecionei **Load Balancers**.
 - Dentro de **Load Balancers** cliquei no botão **Create load balancer**.
@@ -112,7 +112,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
 - Na seção **Health checks**, no campo **Ping path** adicionei o caminho "/wp-admin/install.php".
 - Cliquei em **Create load balancer** para finalizar.
 
-### Gerando a Key pair:
+### Gerando Key pair:
 - Acessei o console AWS e entrei no serviço **EC2**.
 - No menu lateral esquerdo, na seção de **Network & Security** selecionei **Key pairs**.
 - Dentro de **Key pairs** cliquei no botão **Create key pair**.
@@ -122,7 +122,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
 - Cliquei no botão **Create key pair**.
 - Salvei o arquivo .pem.
 
-### Criando o Launch Template:
+### Criando Modelo de Execução:
 - Acessei o console AWS e entrei no serviço **EC2**.
 - No menu lateral esquerdo, na seção **Instances** selecionei **Launch Templates**.
 - Dentro de **Launch Templates** cliquei no botão **Create launch template**.
@@ -190,7 +190,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
     ```
 - Cliquei em **Create launch template** para finalizar.
 
-### Criando o Auto Scaling Groups:
+### Criando Auto Scaling Group:
 - Acessei o console AWS e entrei no serviço **EC2**.
 - No menu lateral esquerdo, na seção de **Auto Scaling** selecionei **Auto Scaling Groups**.
 - Dentro de **Auto Scaling groups** cliquei no botão **Create Auto Scaling group**.
@@ -221,7 +221,7 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
         - Cliquei em **Next**.
         - Revisei e cliquei em **Create Auto Scaling group** para finalizar.
 
-### Configuração do EC2 Instance Connect Endpoint:
+### Configuração EC2 Instance Connect Endpoint:
 - Acessei o console AWS e entrei no serviço **VPC**.
 - No menu lateral esquerdo, na seção de **Virtual private cloud** selecionei **Endpoints**.
 - Dentro de **Endpoints** cliquei no botão **Create endpoint**.
@@ -234,17 +234,17 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
 - Cliquei em **Create endpoint**.
 
 
-### Instalando o WordPress:
+### Instalando o WP:
 - Acessei o **DNS name** do **Load Balancer** através do navegador.
 - Na tela de instalação do **WordPress** mantive o idioma padrão e cliquei em **Continue**.
 - Na tela seguinte preenchi os dados para criação de um usuário.
 - Cliquei em **Install WordPress** para finalizar.
 
-### Testando os serviços:
+### Testando serviços:
 - Acessando a página do WordPress via Load Balancer:
     - Coloquei o **DNS name** do **Load Balancer** através do navegador para acessar a página do **WordPress**.
 
-- Acessando a instância via EC2 Instance Connect Endpoint:
+- Acessando instância via EC2 Instance Connect Endpoint:
     - Configurei as credenciais da conta AWS no terminal do **PowerShell**.
     - Utilizei o comando abaixo para visualizar os ID's das instâncias que estão em execução:
         ```
@@ -255,16 +255,16 @@ Este repositório tem como objetivo documentar as etapas que realizei para a exe
         ```
          aws ec2-instance-connect ssh --instance-id <instance-id>
         ```
-- Testando a montagem do EFS:
+- Testando montagem do EFS:
     - Utilizei o comando `df -h` para verificar se o **EFS** está montado.
     - Utilizei o comando `cat /etc/fstab` para verificar se a **montagem persistente** está configurada.
-- Testando o docker e docker-compose:
+- Testando docker e docker-compose:
     - Utilizei o comando `docker ps` para verificar se o container **wordpress** está executando.
     - Utilizei o comando abaixo para verificar se o **docker-compose** está funcionando:
         ```
         docker-compose -f /efs/docker-compose.yaml ps
         ```
-- Acessando o banco de dados da aplicação WordPress:
+- Acessando banco de dados da aplicação WordPress:
     - Copiar o ID do container **wordpress**.
     - Para acessar o container executei o comando abaixo passando o ID do container:
         ```
